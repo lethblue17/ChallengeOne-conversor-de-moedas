@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
 
 public class ExchangeRateApiClient {
@@ -34,6 +35,27 @@ public class ExchangeRateApiClient {
         URI uri = URI.create(baseUrl + apiKey + endpoint);
         System.out.println(uri);
 
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Conexão falhou com seguinte erro: " + response.statusCode());
+        }
+
+        try {
+            return gson.fromJson(response.body(), JsonObject.class);
+        } catch (JsonSyntaxException e) {
+            throw new RuntimeException("Falha ao processar json: ", e);
+        }
+    }
+
+    public JsonObject pairConversion(String baseCurrency, List<String> currencies) throws Exception {
+        String endpoint = String.format("/pair/%s/%s/%s", currencies.getFirst(), currencies.getLast(), baseCurrency);
+        URI uri = URI.create(baseUrl + apiKey + endpoint);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .GET()

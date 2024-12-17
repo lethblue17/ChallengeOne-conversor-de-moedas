@@ -14,6 +14,7 @@ public class MenuConversor {
         Scanner scan = new Scanner(System.in);
         HashMap<Integer, RunnableWithException> operacoesMenu = new HashMap<>();
         operacoesMenu.put(1, operacoes::getActualRate);
+        operacoesMenu.put(2, operacoes::convertFromUSAToBRA);
 
         while (!sair) {
             System.out.println("Bem vindo ao conversor da One");
