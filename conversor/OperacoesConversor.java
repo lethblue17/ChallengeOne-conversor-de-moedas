@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class OperacoesConversor {
+    private Gson gson = new Gson();
     private static String url = "https://v6.exchangerate-api.com/v6/";
     private final ExchangeRateApiClient apiClient = new ExchangeRateApiClient(url);
 
@@ -19,16 +20,16 @@ public class OperacoesConversor {
         var moeda = scan.next();
         try {
             JsonObject res = apiClient.getExchangeRates(moeda);
-            System.out.println(res);
+            ExchangeResponse response = gson.fromJson(res, ExchangeResponse.class);
+            response.getConversion_rates().forEach((key, value) ->
+                    System.out.println("País: " + key + " | taxa: " + value));
         } catch (Exception e) {
             throw new RuntimeException("Ocorreu um erro: ", e);
         }
     }
 
     public void convertFromUSAToBRA() throws Exception{
-        Gson gson = new Gson();
         Scanner scan = new Scanner(System.in);
-
         System.out.println("Digite o valor a ser convertido:");
         var moeda = scan.next();
         List<String> currencies = new ArrayList<String>();
@@ -43,6 +44,8 @@ public class OperacoesConversor {
             throw new RuntimeException("Ocorreu um erro: ", e);
         }
     }
+
+
 
 
 }
